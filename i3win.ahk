@@ -45,9 +45,9 @@ GoToDesktopNumber(num) {
 
   DllCall("User32\AllowSetForegroundWindow", "Int", -1)
 
+  ; Prevent taskbar icons from flashing on desktop switch
   WinActivate "ahk_class Shell_TrayWnd"
   WinWaitActive "ahk_class Shell_TrayWnd"
-  global GoToDesktopNumberProc
   DllCall(GoToDesktopNumberProc, "Int", num, "Int")
   WinMinimize "ahk_class Shell_TrayWnd"
 
