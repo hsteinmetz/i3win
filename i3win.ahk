@@ -1,6 +1,9 @@
 #SingleInstance
-
 SetWorkingDir(A_ScriptDir)
+#WinActivateForce
+
+SetWinDelay -1
+SetControlDelay -1
 
 VDA_PATH := A_ScriptDir . "\lib\VirtualDesktopAccessor.dll"
 hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", VDA_PATH, "Ptr")
@@ -9,8 +12,6 @@ GetDesktopCountProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor,
 GoToDesktopNumberProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "GoToDesktopNumber", "Ptr")
 GetCurrentDesktopNumberProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "GetCurrentDesktopNumber", "Ptr")
 MoveWindowToDesktopNumberProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "MoveWindowToDesktopNumber", "Ptr")
-CreateDesktopProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "CreateDesktop", "Ptr")
-RemoveDesktopProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "RemoveDesktop", "Ptr")
 
 GetDesktopCount() {
   global GetDesktopCountProc
@@ -25,15 +26,26 @@ MoveCurrentWindowToDesktop(number) {
 }
 
 GoToDesktopNumber(num) {
+  if num - 1 > GetDesktopCount() {
+    CreateNeededDesktops(num)
+  }
+
+  WinActivate "ahk_class Shell_TrayWnd"
+  WinWaitActive "ahk_class Shell_TrayWnd"
   global GoToDesktopNumberProc
   DllCall(GoToDesktopNumberProc, "Int", num, "Int")
+  WinMinimize "ahk_class Shell_TrayWnd"
   return
 }
 
-CreateDesktop() {
-  global CreateDesktopProc
-  ran := DllCall(CreateDesktopProc, "Int")
-  return ran
+CreateNeededDesktops(num) {
+  Loop GetDesktopCount() - num {
+    ;CreateDesktop()
+  }
+}
+
+LaunchTerminal() {
+  Run "cmd"
 }
 
 #1::GoToDesktopNumber(0)
@@ -49,3 +61,7 @@ CreateDesktop() {
 #+4::MoveCurrentWindowToDesktop(3)
 #+5::MoveCurrentWindowToDesktop(4)
 #+6::MoveCurrentWindowToDesktop(5)
+
+#f::WinMaximize "A"
+
+#Enter::LaunchTerminal()
