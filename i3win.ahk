@@ -98,6 +98,8 @@ LaunchTerminal() {
 #+5::MoveCurrentWindowToDesktop(4)
 #+6::MoveCurrentWindowToDesktop(5)
 
+#+q::WinClose "A"
+
 #f::WinMaximize "A"
 
 #Enter::LaunchTerminal()
