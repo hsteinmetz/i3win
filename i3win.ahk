@@ -5,22 +5,33 @@ SetWorkingDir(A_ScriptDir)
 SetWinDelay -1
 SetControlDelay -1
 
-VDA_PATH := A_ScriptDir . "\lib\VirtualDesktopAccessor.dll"
+VDA_PATH := A_ScriptDir . "\lib\vda\VirtualDesktopAccessor.dll"
 hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", VDA_PATH, "Ptr")
 
-GetDesktopCountProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "GetDesktopCount", "Ptr")
-GoToDesktopNumberProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "GoToDesktopNumber", "Ptr")
-GetCurrentDesktopNumberProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "GetCurrentDesktopNumber", "Ptr")
-MoveWindowToDesktopNumberProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "MoveWindowToDesktopNumber", "Ptr")
+global GetDesktopCountProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "GetDesktopCount", "Ptr")
+global GoToDesktopNumberProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "GoToDesktopNumber", "Ptr")
+global GetCurrentDesktopNumberProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "GetCurrentDesktopNumber", "Ptr")
+global MoveWindowToDesktopNumberProc := DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", "MoveWindowToDesktopNumber", "Ptr")
+
+global activeWindowPids := Map()
+
+SetActiveWindowPidForDesktop() {
+  activeDesktop := DllCall(GetCurrentDesktopNumberProc, "Int")
+  activePid := WinGetPID("A")
+  activeWindowPids.Set(activeDesktop, activePid)
+}
+
+GetActiveWindowForCurrentDesktop() {
+  currentDesktop := DllCall(GetCurrentDesktopNumberProc, "Int")
+  return activeWindowPids.Get(currentDesktop, -1)
+}
 
 GetDesktopCount() {
-  global GetDesktopCountProc
   count := DllCall(GetDesktopCountProc, "Int")
   return count
 }
 
 MoveCurrentWindowToDesktop(number) {
-  global MoveWindowToDesktopNumberProc, GoToDesktopNumberProc
   activeHwnd := WinGetID("A")
   DllCall(MoveWindowToDesktopNumberProc, "Ptr", activeHwnd, "Int", number, "Int")
 }
@@ -30,18 +41,35 @@ GoToDesktopNumber(num) {
     CreateNeededDesktops(num)
   }
 
+  SetActiveWindowPidForDesktop()
+
+  DllCall("User32\AllowSetForegroundWindow", "Int", -1)
+
   WinActivate "ahk_class Shell_TrayWnd"
   WinWaitActive "ahk_class Shell_TrayWnd"
   global GoToDesktopNumberProc
   DllCall(GoToDesktopNumberProc, "Int", num, "Int")
   WinMinimize "ahk_class Shell_TrayWnd"
+
+  ; Focus last focused window
+  newActive := GetActiveWindowForCurrentDesktop()
+  if(newActive > -1) {
+    WinActivate "ahk_pid " activeWindowPids[num]
+  } else {
+    Send "!{Esc}"
+  }
+
   return
 }
 
 CreateNeededDesktops(num) {
-  Loop GetDesktopCount() - num {
-    ;CreateDesktop()
+  Loop num - GetDesktopCount() {
+    CreateDesktop()
   }
+}
+
+CreateDesktop() {
+  Send "#^d"
 }
 
 LaunchTerminal() {
