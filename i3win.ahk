@@ -18,7 +18,11 @@ global activeWindowPids := Map()
 SetActiveWindowPidForDesktop() {
   activeDesktop := DllCall(GetCurrentDesktopNumberProc, "Int")
   activePid := WinGetPID("A")
-  activeWindowPids.Set(activeDesktop, activePid)
+  if(activePid != "") {
+    activeWindowPids.Set(activeDesktop, activePid)
+  } else {
+    activeWindowPids.Set(activeDesktop, -1)
+  }
 }
 
 GetActiveWindowForCurrentDesktop() {
