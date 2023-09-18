@@ -46,7 +46,7 @@ MoveCurrentWindowToDesktop(number) {
 
 GoToDesktopNumber(num) {
   if num - 1 > GetDesktopCount() {
-    CreateNeededDesktops(num)
+    CreateNeededDesktops(num - 1)
   }
 
   SetActiveWindowPidForDesktop()
@@ -81,7 +81,7 @@ CreateDesktop() {
 }
 
 LaunchTerminal() {
-  Run "cmd"
+  Run "cmd /D /K cd %USERPROFILE%"
 }
 
 #1::GoToDesktopNumber(0)
@@ -99,7 +99,8 @@ LaunchTerminal() {
 #+6::MoveCurrentWindowToDesktop(5)
 
 #+q::WinClose "A"
-
 #f::WinMaximize "A"
+
+#a::Send "#{PrtSc}"
 
 #Enter::LaunchTerminal()
