@@ -22,7 +22,7 @@ Installing i3win requires:
   AutoHotkey .\i3win.ahk
 ```
 
-To enable the script on startup, simply create a shortcut to `i3win.ahk` in `C:\Users\%USER%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`
+To enable the script on startup, run `create_autostart.ps1` from a powershell with elevated privilege.
 
 ## Usage
 
@@ -33,6 +33,7 @@ Currently only `Win` is supported as modkey.
 `Win + f`: Maximise current window  
 `Win + Shift + q`: Kill current window  
 `Win + Enter`: Launch Terminal
+`Win + a`: Take Screenshot
 
 ## Roadmap
 
