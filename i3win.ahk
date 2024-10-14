@@ -98,6 +98,7 @@ LaunchTerminal() {
 #4::GoToDesktopNumber(3)
 #5::GoToDesktopNumber(4)
 #6::GoToDesktopNumber(5)
+#7::GoToDesktopNumber(6)
 
 #+1::MoveCurrentWindowToDesktop(0)
 #+2::MoveCurrentWindowToDesktop(1)
@@ -105,6 +106,7 @@ LaunchTerminal() {
 #+4::MoveCurrentWindowToDesktop(3)
 #+5::MoveCurrentWindowToDesktop(4)
 #+6::MoveCurrentWindowToDesktop(5)
+#+7::MoveCurrentWindowToDesktop(6)
 
 #+q::WinClose "A"
 #f::WinMaximize "A"
