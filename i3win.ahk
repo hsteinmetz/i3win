@@ -88,7 +88,7 @@ LaunchTerminal() {
   if(FileExist(userDir . "\AppData\Local\Microsoft\WindowsApps\wt.EXE")) {
     Run "wt"
   } else {
-    Run "cmd /D /K cd " . userDir
+    Run "cmd /K cd " . userDir
   }
 }
 
