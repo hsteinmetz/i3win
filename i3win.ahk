@@ -111,6 +111,6 @@ LaunchTerminal() {
 #+q::WinClose "A"
 #f::WinMaximize "A"
 
-#a::Send "#{PrtSc}"
+#a::Send "#{PrintScreen}"
 
 #Enter::LaunchTerminal()

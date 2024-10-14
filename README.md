@@ -37,12 +37,10 @@ Currently only `Win` is supported as modkey.
 ## Roadmap
 
 - Switch window focus using i,j,k,l
-- Take screenshots
 - Window resizing
 - Customisable modkey
 - Dynamic reload
 - Config file
-- default to cmd if `wt` isn't installed
 
 ## Authors
 
