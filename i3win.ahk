@@ -53,18 +53,20 @@ GoToDesktopNumber(num) {
 
   DllCall("User32\AllowSetForegroundWindow", "Int", -1)
 
-  ; Prevent taskbar icons from flashing on desktop switch
-  WinActivate "ahk_class Shell_TrayWnd"
-  WinWaitActive "ahk_class Shell_TrayWnd"
-  DllCall(GoToDesktopNumberProc, "Int", num, "Int")
-  WinMinimize "ahk_class Shell_TrayWnd"
+  if(WinExist("ahk_class Shell_TrayWnd")) {
+    ; Prevent taskbar icons from flashing on desktop switch
+    WinActivate "ahk_class Shell_TrayWnd"
+    WinWaitActive "ahk_class Shell_TrayWnd"
+    DllCall(GoToDesktopNumberProc, "Int", num, "Int")
+    WinMinimize "ahk_class Shell_TrayWnd"
+  }
 
   ; Focus last focused window
   newActive := GetActiveWindowForCurrentDesktop()
-  if(newActive > -1) {
+  try {
     WinActivate "ahk_pid " activeWindowPids[num]
-  } else {
-    Send "!{Esc}"
+  } catch {
+    DllCall(GoToDesktopNumberProc, "Int", num, "Int")
   }
 
   return
@@ -81,7 +83,13 @@ CreateDesktop() {
 }
 
 LaunchTerminal() {
-  Run "cmd /D /K cd %USERPROFILE%"
+  userDir := EnvGet("USERPROFILE")
+
+  if(FileExist(userDir . "\AppData\Local\Microsoft\WindowsApps\wt.EXE")) {
+    Run "wt"
+  } else {
+    Run "cmd /D /K cd " . userDir
+  }
 }
 
 #1::GoToDesktopNumber(0)

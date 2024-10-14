@@ -42,6 +42,7 @@ Currently only `Win` is supported as modkey.
 - Customisable modkey
 - Dynamic reload
 - Config file
+- default to cmd if `wt` isn't installed
 
 ## Authors
 
