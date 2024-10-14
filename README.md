@@ -22,7 +22,7 @@ Installing i3win requires:
   AutoHotkey .\i3win.ahk
 ```
 
-To enable the script on startup, run `create_autostart.ps1` from a powershell with elevated privilege.
+To enable the script on startup, run `create_autostart.ps1` from a powershell with elevated privileges.
 
 ## Usage
 
